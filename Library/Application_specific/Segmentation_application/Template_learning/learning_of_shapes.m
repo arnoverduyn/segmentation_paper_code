@@ -16,15 +16,32 @@ function generic_clusters = learning_of_shapes(pose_trajectories_kettle,paramete
     if bools.print_level; disp('   Calculate statistics of total batch (3 trajectories of kettle)...'); end
 
     L = parameters.L;
-    N1 = size(pose_trajectories_kettle(1).shape_matrix,3);
-    N2 = size(pose_trajectories_kettle(2).shape_matrix,3);
-    N3 = size(pose_trajectories_kettle(3).shape_matrix,3);
-    N = N1 + N2 + N3;
-    batch = zeros(6,3,N);
-    batch(:,:,1:N1) = pose_trajectories_kettle(1).shape_matrix;
-    batch(:,:,N1+1:N1+N2) = pose_trajectories_kettle(2).shape_matrix; 
-    batch(:,:,N1+N2+1:N1+N2+N3) = pose_trajectories_kettle(3).shape_matrix; 
-
+    if strcmp(bools.data_type,'real')
+        N1 = size(pose_trajectories_kettle(1).shape_matrix,3);
+        N2 = size(pose_trajectories_kettle(2).shape_matrix,3);
+        N3 = size(pose_trajectories_kettle(3).shape_matrix,3);
+        N4 = size(pose_trajectories_kettle(4).shape_matrix,3);
+        N5 = size(pose_trajectories_kettle(5).shape_matrix,3);
+        N6 = size(pose_trajectories_kettle(6).shape_matrix,3);
+        N = N1 + N2 + N3 + N4 + N5 + N6;
+        batch = zeros(6,3,N);
+        batch(:,:,1:N1) = pose_trajectories_kettle(1).shape_matrix;
+        batch(:,:,N1+1:N1+N2) = pose_trajectories_kettle(2).shape_matrix; 
+        batch(:,:,N1+N2+1:N1+N2+N3) = pose_trajectories_kettle(3).shape_matrix; 
+        batch(:,:,N1+N2+N3+1:N1+N2+N3+N4) = pose_trajectories_kettle(4).shape_matrix; 
+        batch(:,:,N1+N2+N3+N4+1:N1+N2+N3+N4+N5) = pose_trajectories_kettle(5).shape_matrix; 
+        batch(:,:,N1+N2+N3+N4+N5+1:N1+N2+N3+N4+N5+N6) = pose_trajectories_kettle(6).shape_matrix; 
+    else
+        N1 = size(pose_trajectories_kettle(1).shape_matrix,3);
+        N2 = size(pose_trajectories_kettle(2).shape_matrix,3);
+        N3 = size(pose_trajectories_kettle(3).shape_matrix,3);
+        N = N1 + N2 + N3;
+        batch = zeros(6,3,N);
+        batch(:,:,1:N1) = pose_trajectories_kettle(1).shape_matrix;
+        batch(:,:,N1+1:N1+N2) = pose_trajectories_kettle(2).shape_matrix; 
+        batch(:,:,N1+N2+1:N1+N2+N3) = pose_trajectories_kettle(3).shape_matrix; 
+    end
+    
     % Find global viewpoint (all datapoints) (not that important)
     vel_vectors = zeros(3,2*N);
     for n = 1:N
@@ -35,7 +52,7 @@ function generic_clusters = learning_of_shapes(pose_trajectories_kettle,paramete
     if det(U) < 0
         U(1:3,3) = -U(1:3,3);
     end
-
+ 
     % Calculate mean shape descriptor (all datapoints)
     sum_twists = zeros(6,3);
     for n = 1:N
@@ -45,89 +62,12 @@ function generic_clusters = learning_of_shapes(pose_trajectories_kettle,paramete
     end
     average_shape = sum_twists/N;
 
-    % Calculate standard deviation shape descriptor (all datapoints)
-    variance = 0;
-    for n = 1:N
-        A_ = [L*batch(1:3,1:3,n),batch(4:6,1:3,n)];
-        B_ = [L*average_shape(1:3,:),average_shape(4:6,:)];
-        C = A_*B_';
-        [U,~,V] = svd(C);
-        R = V*U';
-        if det(R) < 0
-            U(1:3,3) = -U(1:3,3);
-            R = V*U';
-        end
-        diff_matrix = (R*A_-B_).^2;
-        variance = variance + sum(diff_matrix,'all');
-    end
-    std_dev = sqrt(variance/(N-1));    
-
-    batch_unordered = batch;
-
-    %% Order datapoints before clustering
-    if bools.order_learning_data
-        if bools.print_level; disp('   Order batch sample points before incremental clustering...'); end
-        
-        batch_ordered = zeros(6,3,N);
-        included_shapes = average_shape;
-        counter = 1;
-        percentiles = round((N)/5);
-        for j = 1:N-1
-    
-            if bools.print_level
-                if j == percentiles*counter
-                    disp(strcat(['      Progress: ' num2str(round(j/(N-1)*10)*10) '%']))
-                    counter = counter+1;
-                end
-            end
-    
-            shortest_distance = inf;
-            nb_comparisons = size(included_shapes,3);
-            for n = 1:N
-                if ~isnan(batch(1,1,n))
-                    summed_distance = 0;
-                    A_ = [L*batch(1:3,:,n),batch(4:6,:,n)];
-                    for k = 1:nb_comparisons
-                        B_ = [L*included_shapes(1:3,:,k),included_shapes(4:6,:,k)];
-                        C = A_*B_';
-                        [U,~,V] = svd(C);
-                        R = V*U';
-                        if det(R) < 0
-                            U(1:3,3) = -U(1:3,3);
-                            R = V*U';
-                        end
-                        diff_matrix = (R*A_-B_).^2;
-                        summed_distance = summed_distance + sum(diff_matrix,'all');
-                    end
-                    if summed_distance < shortest_distance
-                        shortest_distance = summed_distance;
-                        closest_sample = n;
-                    end
-                end
-            end
-            batch_ordered(:,:,j) = batch(:,:,closest_sample);
-            included_shapes(:,:,j+1) = batch(:,:,closest_sample);
-            % pop this sample
-            batch(:,:,closest_sample) = nan(6,3);
-        end
-    
-        % add last sample
-        for n = 1:N
-            if ~isnan(batch(1,1,n))
-                 last_sample = batch(:,:,n);
-            end
-        end
-        batch_ordered(:,:,N) = last_sample;
-        init_std_dev = std_dev; 
-    else
-        batch_ordered = batch_unordered;
-        init_std_dev = std_dev/10; 
-    end
+    init_std_dev = parameters.min_Q; 
 
     %% Incremental clusering algorithm
     if bools.print_level; disp('   Incremental clustering of trajectory shapes...'); end
-
-    shape_matrix = batch_ordered;
+    
+    shape_matrix = batch;
     min_Q = parameters.min_Q; 
     stopping_criterion = 10^(-6); % when relative change in std_dev is small
     max_iterations = 500;
@@ -170,6 +110,33 @@ function generic_clusters = learning_of_shapes(pose_trajectories_kettle,paramete
                 old_std_dev = clusters(closest_cluster_nb).std_dev;
                 % Update mean
                 clusters(closest_cluster_nb).mean = (nb_datapoints*old_mean + current_shape_rotated)/(nb_datapoints+1);
+                if strcmp(bools.progress_domain,'geometric')
+                    % Re-normalize mean %% DO FOR ALL METHODS!!!
+                    if strcmp(bools.progress_type,'screw_based_new')
+                        for m = 1:3
+                            weighted_norm = sqrt(sum(clusters(closest_cluster_nb).mean(1:3,m).^2*L^2 + clusters(closest_cluster_nb).mean(4:6,m).^2));
+                            clusters(closest_cluster_nb).mean(:,m) = clusters(closest_cluster_nb).mean(:,m)/weighted_norm;
+                        end
+                    elseif strcmp(bools.progress_type,'screw_based_old')
+                        for m = 1:3
+                            weighted_norm = norm(clusters(closest_cluster_nb).mean(1:3,m))*L + norm(clusters(closest_cluster_nb).mean(4:6,m));
+                            clusters(closest_cluster_nb).mean(:,m) = clusters(closest_cluster_nb).mean(:,m)/weighted_norm;
+                        end
+                    elseif strcmp(bools.progress_type,'angle')
+                        for m = 1:3 
+                            clusters(closest_cluster_nb).mean(1:3,m) = clusters(closest_cluster_nb).mean(1:3,m)/norm(clusters(closest_cluster_nb).mean(1:3,m));
+                        end
+                    elseif strcmp(bools.progress_type,'arclength')
+                        for m = 1:3 
+                            clusters(closest_cluster_nb).mean(4:6,m) = clusters(closest_cluster_nb).mean(4:6,m)/norm(clusters(closest_cluster_nb).mean(4:6,m));
+                        end
+                    elseif strcmp(bools.progress_type,'combined')
+                        for m = 1:3                       
+                            weighted_norm = sqrt(sum(clusters(closest_cluster_nb).mean(1:3,m).^2*L^2 + clusters(closest_cluster_nb).mean(4:6,m).^2));
+                            clusters(closest_cluster_nb).mean(:,m) = clusters(closest_cluster_nb).mean(:,m)/weighted_norm;
+                        end
+                    end
+                end
                 % Update variance
                 clusters(closest_cluster_nb).std_dev = sqrt(nb_datapoints/(nb_datapoints+1)*(old_std_dev^2 + (shortest_distance)^2/(nb_datapoints+1)));
                 % Update nb_datapoints
@@ -211,6 +178,23 @@ function generic_clusters = learning_of_shapes(pose_trajectories_kettle,paramete
     end
     nb_clusters = cluster_nb-1;
     if bools.print_level; disp(strcat(['   Number of generic clusters: ' num2str(nb_clusters)])); end
-
-
+    
+    
+    %% represent the clusters in a more canonical form for representation purposes;
+    descriptor_ref = [1,1,1;0,0,0;0,0,0;1,1,1;0,0,0;0,0,0];
+    for k = 1:nb_clusters
+        current_cluster_mean = generic_clusters(k).mean;
+        A_ = [L*current_cluster_mean(1:3,:),current_cluster_mean(4:6,:)];
+        B_ = [descriptor_ref(1:3,:),descriptor_ref(4:6,:)];
+        C = A_*B_';
+        [U,~,V] = svd(C);
+        R = V*U';
+        if det(R) < 0
+            U(1:3,3) = -U(1:3,3);
+            R = V*U';
+        end
+        current_cluster_mean_rotated(1:3,1:3) = R*current_cluster_mean(1:3,1:3);
+        current_cluster_mean_rotated(4:6,1:3) = R*current_cluster_mean(4:6,1:3);
+        generic_clusters(k).mean = current_cluster_mean_rotated;
+    end
 end

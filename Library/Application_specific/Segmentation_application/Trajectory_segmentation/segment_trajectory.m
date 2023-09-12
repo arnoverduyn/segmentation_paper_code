@@ -73,6 +73,20 @@ function [input_trajectory] = segment_trajectory(clusters,input_trajectory,bools
         end
         k = k+1;
     end
+    
+%     %% remove small segments
+%     long_segments = struct();
+%     nb_long_segments = 1;
+%     for k = 1:nb_segments
+%         segment_N = segments(k).datapoints;
+%         if segment_N > 5/100*N % sufficiently long segment
+%             long_segments(nb_long_segments).datapoints = segments(k).datapoints;
+%             long_segments(nb_long_segments).cluster_nb = segments(k).cluster_nb;
+%             nb_long_segments = nb_long_segments + 1;
+%         end
+%     end
+%     nb_long_segments = nb_long_segments-1;
+%     
     input_trajectory.associated_cluster_indices = associated_cluster_indices;
     input_trajectory.segments = segments;
     

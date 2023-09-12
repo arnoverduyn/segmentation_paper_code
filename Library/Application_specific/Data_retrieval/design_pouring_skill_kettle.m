@@ -4,7 +4,7 @@ function [pose_trajectory,time_vector,N] = design_pouring_skill_kettle(std_dev_a
 % reference point on the kettle.
     
     %% Segment 0: Standstill
-    t_segm = 1; % 1 second
+    t_segm = 2; % 1 second
     time_vector_segm = 0:dt:t_segm;
     N_segm = length(time_vector_segm);
     
@@ -17,10 +17,10 @@ function [pose_trajectory,time_vector,N] = design_pouring_skill_kettle(std_dev_a
     
     
     %% Segment 1: sliding the jug across the table towards himself
-    t_segm = 1; % 1 second
+    t_segm = 3; % 1.5 seconds
     time_vector_segm = 0:dt:t_segm;
     N_segm = length(time_vector_segm);
-    vel_segm = 0.3*[-1/sqrt(2);-1/sqrt(2);0]; % 30 cm/s
+    vel_segm = 0.3/3*[-1/sqrt(2);-1/sqrt(2);0]; % 30 cm/s
     vel_segm = vel_segm*(1-cos(2*pi/time_vector_segm(end)*time_vector_segm));
     
     T_segm = zeros(4,4,N_segm);
@@ -37,7 +37,7 @@ function [pose_trajectory,time_vector,N] = design_pouring_skill_kettle(std_dev_a
     end
 
     %% Segment 2: picking up jug
-    t_segm = 1; % 1 second
+    t_segm = 2; % 1 second
     time_vector_segm = 0:dt:t_segm;
     N_segm = length(time_vector_segm);
     omega_segm = 95/180*pi; % 95 degrees per second
@@ -63,7 +63,7 @@ function [pose_trajectory,time_vector,N] = design_pouring_skill_kettle(std_dev_a
     end
     
     %% Segment 3: rotation about z-axis
-    t_segm = 1; % 1 second
+    t_segm = 4; % 2 seconds
     time_vector_segm = 0:dt:t_segm;
     N_segm = length(time_vector_segm);
     omega_segm = 60/180*pi; % 60 degrees per second
@@ -87,7 +87,7 @@ function [pose_trajectory,time_vector,N] = design_pouring_skill_kettle(std_dev_a
     end
     
     %% Segment 4: Reverse rotation about z-axis
-    t_segm = 1; % 1 second
+    t_segm = 2; % 1 second
     time_vector_segm = 0:dt:t_segm;
     N_segm = length(time_vector_segm);
     omega_segm = -60/180*pi; % 60 degrees per second
@@ -111,7 +111,7 @@ function [pose_trajectory,time_vector,N] = design_pouring_skill_kettle(std_dev_a
     end
     
     %% Segment 5: putting down jug
-    t_segm = 1; % 2 seconds
+    t_segm = 2; % 2 seconds
     time_vector_segm = 0:dt:t_segm;
     N_segm = length(time_vector_segm);
     omega_segm = -80/180*pi; % 80 degrees per second
@@ -137,10 +137,10 @@ function [pose_trajectory,time_vector,N] = design_pouring_skill_kettle(std_dev_a
     end
     
     %% Segment 1: sliding the jug away
-    t_segm = 1; % 2 seconds
+    t_segm = 2; % 1 second
     time_vector_segm = 0:dt:t_segm;
     N_segm = length(time_vector_segm);
-    vel_segm = 0.3*[0.3;1;0]/norm([0.3;1;0]); % 30 cm/s
+    vel_segm = 0.3/2*[0.3;1;0]/norm([0.3;1;0]); % 30 cm/s
     vel_segm = vel_segm*(1-cos(2*pi/time_vector_segm(end)*time_vector_segm));
     
     T_segm = zeros(4,4,N_segm);
@@ -157,7 +157,7 @@ function [pose_trajectory,time_vector,N] = design_pouring_skill_kettle(std_dev_a
     end
     
     %% Segment end: Standstill
-    t_segm = 1; % 1 second
+    t_segm = 0.5; % 1 second
     time_vector_segm = 0:dt:t_segm;
     N_segm = length(time_vector_segm);
     

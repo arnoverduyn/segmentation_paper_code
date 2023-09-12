@@ -16,7 +16,9 @@ function [P,Pdot,Pddot] = kalman_smoother(data,params_preprocessing)
 data_smooth = zeros(N,M);
 data_filtered = zeros(N,M);
 datadot_smooth = zeros(N,M);
+datadot_filtered = zeros(N,M);
 datadotdot_smooth = zeros(N,M);
+datadotdot_filtered = zeros(N,M);
 
 % For all coordinates in the data
 for k=1:M
@@ -54,7 +56,7 @@ for k=1:M
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Kalman correct: correction of current state using predicted state
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        nu = z(:,j) - H*x_pred; %innovation
+        nu = [z(:,j);0] - H*x_pred; %innovation
         
         S = H*P_pred*H' + R; %innovation covariance
         K = P_pred*H'/S; %kalman gain (K = P_pred*H'*S^(-1))
@@ -66,7 +68,9 @@ for k=1:M
         X_FILT(:,j)= x_filt;
         P_PRED{j} = P_pred;
         P_FILT{j} = P_filt;
-        data_filtered(j,:) = x_filt(1:5:end);
+        data_filtered(j,k) = x_filt(1);
+        datadot_filtered(j,k) = x_filt(2);
+        datadotdot_filtered(j,k) = x_filt(3);
         
         % Initialize next step
         x_old = x_filt;
@@ -92,9 +96,13 @@ for k=1:M
         x_pred = X_PRED(:,j+1);
         P_pred = P_PRED{j+1};
         
-        J = P_filt*F'/P_pred; %J=P_filt*F'*P_pred^(-1);
+        J = P_filt*F'*(P_pred)^(-1); 
         x_smooth = x_filt + J*(x_new - x_pred);
         P_smooth = P_filt + J*(P_new - P_pred)*J';
+
+%         J = P_filt*F'/P_FILT{j+1}; 
+%         x_smooth = x_filt + J*(x_new - X_FILT(:,j+1));
+%         P_smooth = P_filt + J*(P_new - P_FILT{j+1})*J';
         
         data_smooth(j,k) = x_smooth(1);
         datadot_smooth(j,k) = x_smooth(2);

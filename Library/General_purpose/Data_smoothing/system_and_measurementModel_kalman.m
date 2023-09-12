@@ -26,7 +26,9 @@ qq=q'*q;
 Q=(sigma_p)^2*(qq);
 
 %Measurement system
-H=[1 0 0; 0 1 0]; % position measurement + virtual velocity measurement
+% H=[1 0 0; 0 0 1]; % position measurement + virtual velocity measurement
+H=[1 0 0; 0 0 1]; % position measurement + virtual velocity measurement
 
 %Noise covariance matrix
-R=[sigma_m^2, 0; 0, 0.1*sigma_m^2/dT^2];
+R=[sigma_m^2, 0; 0, 0.03*sigma_m^2/dT^2];
+% R=[sigma_m^2, 0; 0, 10*sigma_m^2/dT^2];

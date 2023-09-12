@@ -5,11 +5,26 @@ function L = calibrate_L(parameters,bools,kettle)
 % for L is solved using the built-in fmincon() function
 
     % Retrieve synthetic calibration data (segment of a pure translation)
-    [pose_trajectory,~,N] = design_translational_trajectory(parameters.std_dev_angle,parameters.std_dev_pos,parameters.dt);
+    if bools.real_data
+        [pose_trajectory,N] = load_recorded_translational_motion();
+    else
+        [pose_trajectory,~,N] = design_translational_trajectory(parameters.std_dev_angle,parameters.std_dev_pos,parameters.dt);
+    end
 
     % Smooth synthetic calibration data with a Kalman smoother
     [smooth_pose_trajectory,smooth_posetwist,~] = ...
         smooth_pose_data(pose_trajectory,parameters);
+    
+%     T = smooth_pose_trajectory;
+%     pos = squeeze(T(1:3,4,:));
+%     figure()
+%     plot3(pos(1,:),pos(2,:),pos(3,:),'b')
+%     hold on
+%     quiver3(pos(1,:),pos(2,:),pos(3,:),squeeze(T(1,1,:))',squeeze(T(2,1,:))',squeeze(T(3,1,:))','r')
+%     hold on
+%     quiver3(pos(1,:),pos(2,:),pos(3,:),squeeze(T(1,2,:))',squeeze(T(2,2,:))',squeeze(T(3,2,:))','g')
+%     hold on
+%     quiver3(pos(1,:),pos(2,:),pos(3,:),squeeze(T(1,3,:))',squeeze(T(2,3,:))',squeeze(T(3,3,:))','b')
 
     %% solve the calibration problem
 
