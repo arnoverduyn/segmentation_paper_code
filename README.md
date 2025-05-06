@@ -15,5 +15,8 @@ Ensure that MATLAB is installed on your system. The code is tested with MATLAB R
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## Acknowledgements
+This work was supervised by Maxim Vochten and Joris De Schutter. I would like to express my gratitude for their valuable guidance and support throughout the project.
+
 
 

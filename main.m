@@ -11,7 +11,7 @@ addpath(genpath('Code'))
 % trajectory descriptor
 
 %% Setup of the experiments
-bools.data_type = 'simulation'; % {'simulation', 'new_simulation', 'real'}
+bools.data_type = 'real'; % {'simulation', 'new_simulation', 'real'}
 bools.evaluation_domain = 'geometric'; % {'time','geometric'} -> domain in which the segmentation performance is evaluated
 bools.bool_compare_all_results = 0; % {0,1} -> if 1, the saved outputs of the different methods discussed in the paper is regenerated
                                     %       -> if 0, the performance of the descriptor type and metric specified below will be evaluated
