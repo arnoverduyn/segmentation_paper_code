@@ -1,12 +1,21 @@
-function plot_segmented_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,kettle,bottle,table,cup)
+function plot_segmented_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,kettle,bottle,table,cup,bools)
     
-    colors = [0,0,1;
-        0,1,0;
-        1,0,1;
-        1,0,0;
-        1,1,0;
-        1,1,1];
-    colors = [colors;colors/2;colors/3;colors/4;colors/5;colors/6;colors/7;colors/8;colors/9;colors/10];
+    if strcmp(bools.data_type,'real')
+        colors = [0,0,1; %blue
+            0,1,0; % green
+            1,0,1; % m
+            1,0,0; % red
+            1,1,0; % yellow
+            1,1,1];
+        colors = [colors;colors/2;colors/3;colors/4];
+    else
+        colors = [0,0,1; %blue
+            0,1,0; % green
+            1,0,1; % magenta
+            1,1,0; % yellow
+            0,1,1]; 
+        colors = [colors;colors/2;colors/3;colors/4;colors/5];
+    end
 
     %% case kettle
     figure()
@@ -63,9 +72,6 @@ function plot_segmented_trajectories(pose_trajectories_kettle,pose_trajectories_
         hold on
     end
 
-%     % plot table
-%     patch('vertices',table.homogeneous_vertices(1:3,:)','faces',table.faces,'facecolor',table.color,'facealpha',0.6,'edgecolor','none')
-
     % plot cup
     patch('vertices',(cup.homogeneous_vertices(1:3,:)-[0.005;0.005;0])','faces',cup.faces,'facecolor',cup.color,'facealpha',0.8,'edgecolor','none')
 
@@ -73,10 +79,11 @@ function plot_segmented_trajectories(pose_trajectories_kettle,pose_trajectories_
     xlabel('x')
     ylabel('y')
     zlabel('z')
-        view(-10,30) % 3D view
+    view(-10,30) % 3D view
 %     view(2); % top view
     light
     axis off
+    title('segmented trajectories')
 %     set(gca,'FontSize',20)
 
 
@@ -116,6 +123,7 @@ function plot_segmented_trajectories(pose_trajectories_kettle,pose_trajectories_
     view(-10,30) % 3D view
     light
     axis off
+    title('segmented trajectories')
 %     set(gca,'FontSize',20)
     
 end

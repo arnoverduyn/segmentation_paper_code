@@ -1,4 +1,4 @@
-function [xi_dot,w_p_ref,twist_ref] = calculate_geom_progress_rate_from_twist(T,twist,L)
+function [xi_dot,w_p_ref,twist_ref] = calculate_geom_progress_rate_screwbased_from_twist(T,twist,L)
 % This function calculates the proposed geometric progress rate for rigid
 % body trajectories from input pose and twist data.
 % INPUT : T (4x4xN)      -> Input pose trajectory
@@ -39,8 +39,6 @@ for k = 1:N
         end
     end
     xi_dot(k) = sqrt(L^2*dot(omega,omega) + v1^2);
-%     % or 1-norm
-%     xi_dot(k) = L*norm(omega) + abs(v1);
 end
 
 w_p_ref = zeros(3,N);

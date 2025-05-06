@@ -21,8 +21,8 @@ function [pose_trajectories_kettle,pose_trajectories_bottle] = load_all_data(par
         if strcmp(bools.data_type,'real')
             plot_real_data(pose_trajectories_kettle,kettle,table,cup)
         else
-            plot_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,kettle,bottle,table,cup)
-            if bools.bool_show_intermediate_movies; movie_input_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,kettle,bottle,table,cup,10,0.1); end
+            plot_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,kettle,bottle,table,cup,'raw trajectory data')
+            if bools.bool_show_intermediate_movies; movie_input_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,kettle,bottle,table,cup,10,0.05,'raw trajectory data (movie)'); end
         end
     end
 

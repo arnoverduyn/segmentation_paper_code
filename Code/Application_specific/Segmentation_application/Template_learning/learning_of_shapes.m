@@ -16,6 +16,7 @@ function generic_clusters = learning_of_shapes(pose_trajectories_kettle,paramete
     if bools.print_level; disp('   Calculate statistics of total batch (3 trajectories of kettle)...'); end
 
     L = parameters.L;
+    % Concatenate the trajectory-shape samples within all trajectories
     if strcmp(bools.data_type,'real')
         N1 = size(pose_trajectories_kettle(1).shape_matrix,3);
         N2 = size(pose_trajectories_kettle(2).shape_matrix,3);
@@ -42,7 +43,7 @@ function generic_clusters = learning_of_shapes(pose_trajectories_kettle,paramete
         batch(:,:,N1+N2+1:N1+N2+N3) = pose_trajectories_kettle(3).shape_matrix; 
     end
     
-    % Find global viewpoint (all datapoints) (not that important)
+    % Find global viewpoint (all datapoints) 
     vel_vectors = zeros(3,2*N);
     for n = 1:N
         vel_vectors(:,1 + 2*(n-1)) = L*batch(1:3,2,n);
@@ -69,9 +70,9 @@ function generic_clusters = learning_of_shapes(pose_trajectories_kettle,paramete
     
     shape_matrix = batch;
     min_Q = parameters.min_Q; 
-    stopping_criterion = 10^(-6); % when relative change in std_dev is small
+    stopping_criterion = 10^(-6); % stop when relative change in std_dev is small
+    relative_change = inf; % initialization of relative_change
     max_iterations = 500;
-    relative_change = inf;
     iteration = 1;
     clusters = struct();
     while relative_change > stopping_criterion && iteration < max_iterations
@@ -81,6 +82,8 @@ function generic_clusters = learning_of_shapes(pose_trajectories_kettle,paramete
         nb_clusters = 1;
         for n = 1:N
             current_shape = shape_matrix(:,:,n);
+
+            % Find the cluster of trajectory shapes of which its mean is the most similar with the current trajectory shape 
             shortest_distance = inf;
             for k = 1:nb_clusters
                 current_cluster_mean = clusters(k).mean;
@@ -102,16 +105,19 @@ function generic_clusters = learning_of_shapes(pose_trajectories_kettle,paramete
                     current_shape_rotated(4:6,1:3) = R*current_shape(4:6,1:3);
                 end
             end
+            
+            % Retrieve the spread (std_dev) of the closest cluster
             closest_cluster_std_dev = clusters(closest_cluster_nb).std_dev;
-            if shortest_distance < 3*closest_cluster_std_dev 
-                % number of clusters still valid
+            
+            if shortest_distance < 3*closest_cluster_std_dev  % Add the current trajectory shape to the closest cluster
+
                 nb_datapoints = clusters(closest_cluster_nb).nb_datapoints;
                 old_mean = clusters(closest_cluster_nb).mean;
                 old_std_dev = clusters(closest_cluster_nb).std_dev;
                 % Update mean
                 clusters(closest_cluster_nb).mean = (nb_datapoints*old_mean + current_shape_rotated)/(nb_datapoints+1);
                 if strcmp(bools.progress_domain,'geometric')
-                    % Re-normalize mean %% DO FOR ALL METHODS!!!
+                    % Re-normalize mean 
                     if strcmp(bools.progress_type,'screw_based_new')
                         for m = 1:3
                             weighted_norm = sqrt(sum(clusters(closest_cluster_nb).mean(1:3,m).^2*L^2 + clusters(closest_cluster_nb).mean(4:6,m).^2));

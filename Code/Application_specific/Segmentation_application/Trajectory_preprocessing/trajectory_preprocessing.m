@@ -16,8 +16,7 @@ function [pose_trajectories_kettle,pose_trajectories_bottle] = trajectory_prepro
     [pose_trajectories_kettle,pose_trajectories_bottle] = smooth_all_data(pose_trajectories_kettle,pose_trajectories_bottle,parameters,bools);
 
     if ~strcmp(bools.data_type,'real') 
-        if bools.bool_plot_all_figures; plot_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,kettle,bottle,table,cup); end
-        if bools.bool_show_intermediate_movies; movie_input_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,kettle,bottle,table,cup,10,0.1); end
+        if bools.bool_plot_all_figures; plot_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,kettle,bottle,table,cup,'smoothed trajectories'); end
     end
 
     %% calculate geometric trajectory-shape descriptors of all trajectories
@@ -31,8 +30,7 @@ function [pose_trajectories_kettle,pose_trajectories_bottle] = trajectory_prepro
         [pose_trajectories_kettle,pose_trajectories_bottle] = reparametrize_all_trajectories_to_geom_domain(pose_trajectories_kettle,pose_trajectories_bottle,parameters);
 
         if ~strcmp(bools.data_type,'real') 
-            if bools.bool_plot_all_figures; plot_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,kettle,bottle,table,cup); end
-            if bools.bool_show_intermediate_movies; movie_input_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,kettle,bottle,table,cup,2,0.4); end
+            if bools.bool_plot_all_figures; plot_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,kettle,bottle,table,cup,'reparameterized trajectories'); end
         end
         
         % Calculate the geometric twists along the trajectory

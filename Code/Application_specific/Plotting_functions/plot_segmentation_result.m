@@ -10,9 +10,9 @@ function plot_segmentation_result(pose_trajectories_kettle,parameters,bools)
             1,1,1];
         colors = [colors;colors/2;colors/3;colors/4];
     else
-        colors = [0,1,0; %green
-            1,0,1; %m
-            1,0,0; %red
+        colors = [0,0,1; %blue
+            0,1,0; % green
+            1,0,1; % magenta
             1,1,0; % yellow
             0,1,1]; 
         colors = [colors;colors/2;colors/3;colors/4;colors/5];
@@ -27,7 +27,6 @@ function plot_segmentation_result(pose_trajectories_kettle,parameters,bools)
             else
                 color = [0,0,0];
             end
-    %         scatter(i*0.02,0+(data-1),100,'filled','MarkerFaceColor',color)
             plot([(i-0.5)*0.02 (i+0.5)*0.02],[0-(data-1),0-(data-1)],'LineWidth',20,'color',color)
             hold on
         end
@@ -66,5 +65,7 @@ function plot_segmentation_result(pose_trajectories_kettle,parameters,bools)
         xline(17,'-k','LineWidth',2) % start standstill
         hold on
     end
+
+    title('segmentation results')
 
 end

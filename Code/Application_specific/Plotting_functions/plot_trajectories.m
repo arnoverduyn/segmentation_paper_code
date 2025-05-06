@@ -1,4 +1,4 @@
-function plot_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,kettle,bottle,table,cup)
+function plot_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,kettle,bottle,table,cup,title_name)
 
     %% case kettle
     figure()
@@ -40,6 +40,7 @@ function plot_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,ket
     view(2); % top view
     light
     axis off
+    title(title_name)
 %     set(gca,'FontSize',20)
 
 
@@ -69,5 +70,6 @@ function plot_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,ket
     view(0,30) % 3D view
     light
     set(gca,'FontSize',20)
+    title(title_name)
     
 end

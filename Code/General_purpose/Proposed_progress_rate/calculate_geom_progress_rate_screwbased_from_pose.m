@@ -52,8 +52,6 @@ for k = 1:N-1
     end
     
     xi_dot(k) = sqrt(L^2*dot(omega,omega) + v1^2);
-%     % or 1-norm
-%     xi_dot(k) = L*norm(omega) + abs(v1);
 
 end
 

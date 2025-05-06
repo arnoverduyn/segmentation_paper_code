@@ -1,7 +1,9 @@
 close all; clc; clear variables;
 
-add_library_folder();
-add_data_folder();
+restoredefaultpath
+
+addpath(genpath('Data'))
+addpath(genpath('Code'))
 
 %%
 % This script runs the proposed self-supervised segmentation algorithm to
@@ -9,11 +11,10 @@ add_data_folder();
 % trajectory descriptor
 
 %% Setup of the experiments
-bools.data_type = 'real'; % {'simulation', 'new_simulation', 'real'}
+bools.data_type = 'simulation'; % {'simulation', 'new_simulation', 'real'}
 bools.evaluation_domain = 'geometric'; % {'time','geometric'} -> domain in which the segmentation performance is evaluated
 bools.bool_compare_all_results = 0; % {0,1} -> if 1, the saved outputs of the different methods discussed in the paper is regenerated
-                                    %       -> if 0, the performance of the descriptor type and metric
-                                    %       specified below will be evaluated
+                                    %       -> if 0, the performance of the descriptor type and metric specified below will be evaluated
 
 %% Setup of the descriptor type and metric
 bools.progress_domain = 'geometric'; % 'time' or 'geometric'
@@ -52,9 +53,7 @@ bools.bool_plot_all_figures = 1;
 bools.bool_show_intermediate_movies = 0;
 % Above intermediate movies includes visualizations of 
 %  (1) the input data
-%  (2) the smoothed data
-%  (3) the reparametrized data
-%  (4) visualization of the generated segments
+%  (2) visualization of the generated segments
 
 %% Save outputs
 bools.save_simulation_data = 0; % 1 -> save an exact copy of the simulation data (for reproducability reasons)

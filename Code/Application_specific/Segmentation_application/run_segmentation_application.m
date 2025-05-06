@@ -36,6 +36,7 @@ if bools.print_level; disp(' '); disp('TRAJECTORY PREPROCESSING: ');end
 if bools.print_level; disp(' '); disp('LEARNING OF GEOMETRIC TRAJECTORY-SHAPE PRIMITIVES:'); end
 generic_clusters = learning_of_shapes(pose_trajectories_kettle,parameters,bools);
 
+% Display the learned trajectory-shape primitives
 if bools.print_level; disp(' '); disp('LEARNED GEOMETRIC TRAJECTORY-SHAPE PRIMITIVES:'); end
 nb_clusters = length(generic_clusters);
 for k = 1:nb_clusters
@@ -49,11 +50,11 @@ if bools.print_level; disp(' '); disp('SELF-SUPERVISED SEGMENTATION OF TRAJECTOR
 [pose_trajectories_kettle,pose_trajectories_bottle] = segment_all_trajectories(generic_clusters,pose_trajectories_kettle,pose_trajectories_bottle,parameters,bools);
 
 %% visualize the results
-if ~strcmp(bools.data_type,'real') && strcmp(bools.progress_type,'screw_based')
+if ~strcmp(bools.data_type,'real') 
     if bools.bool_plot_all_figures
-        plot_segmented_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,kettle,bottle,table,cup)
+        plot_segmented_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,kettle,bottle,table,cup,bools)
     end
-    if bools.bool_show_intermediate_movies; movie_segmented_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,kettle,bottle,table,cup,2,0.4); end
+    if bools.bool_show_intermediate_movies; movie_segmented_trajectories(pose_trajectories_kettle,pose_trajectories_bottle,kettle,bottle,table,cup,2,0.3,'segmented trajectories (movie)',bools); end
 
     if bools.bool_create_movie
         close all;
