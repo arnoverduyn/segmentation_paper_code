@@ -6,9 +6,7 @@ This repository contains the MATLAB code for the experimental validation of a no
 This novel progress parameter is validated for rigid-body trajectory segmentation and compared against other progress parameters from the literature. 
 The methodology and results are described in the [2024 ICRA paper](https://ieeexplore.ieee.org/abstract/document/10610030?casa_token=402S-PDRum0AAAAA:WnC_bZHqM6mrwBatkw2L9rHE6gbiWwpgqDWSPBW8eAjjl6eOhfmxCaU0ixssQJnlU8IIMh6NtEw).
 
-## Prerequisites
-
-### 1. MATLAB
+## MATLAB
 Ensure that MATLAB is installed on your system. The code is tested with MATLAB R2024b.
 
 ## License
